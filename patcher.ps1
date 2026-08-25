@@ -3,7 +3,10 @@
 # downloads only if it differs, verifies what it downloaded, and clears the
 # WDB cache so item and spell tooltips are not stale.
 #
-# Exit codes: 0 ok (game may launch) | 1 config | 2 network | 3 verify failed
+# Exit codes:
+#   0  up to date, nothing done   (launch straight away)
+#  10  patch was updated          (worth showing the player before launching)
+#   1  config problem | 2 network | 3 verification failed
 
 $ErrorActionPreference = 'Stop'
 
@@ -107,4 +110,4 @@ if (Test-Path $CacheDir) {
 }
 
 Write-Host ''
-exit 0
+exit 10   # signal 'something changed' so the launcher shows this
