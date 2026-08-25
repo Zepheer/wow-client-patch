@@ -18,14 +18,3 @@ files, so it can never stop you playing.
 ## What it installs
 
 `Data\patch-4.MPQ` — custom items, spells and interface data for this server.
-
-## For the admin
-
-`./publish.sh "what changed"` regenerates `version.txt` from the live patch,
-commits it, and uploads the MPQ as a release asset.
-
-**The MPQ is never committed to git** — only `version.txt` is. The binary lives
-in Releases, so repository history does not grow with every update.
-
-The patcher reads `/releases/latest/download/patch-4.MPQ`, which GitHub always
-points at the newest release, so publishing needs no change to the patcher.
