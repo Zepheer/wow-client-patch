@@ -1,0 +1,5 @@
+# The MPQ is distributed via GitHub Releases, never committed - committing a
+# 4.8MB binary on every update would grow git history permanently.
+*.MPQ
+*.mpq
+*.part

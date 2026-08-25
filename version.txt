@@ -1,0 +1,6 @@
+# Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
+version=1
+file=patch-4.MPQ
+sha256=930db951405bf75a2e6c0d6021113c10395de4bfe1a318072b0c44ad44be4562
+size=4996969
+notes=Jeeves auction house, Portable Anvil and Forge, gathering and enchant changes
