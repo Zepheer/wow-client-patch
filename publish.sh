@@ -36,7 +36,15 @@ ADDONS=(
 # incidental - it was empty when this was first tried, and publishing from a
 # stale or half-restored client copy is how you ship the wrong bytes.
 SRC="${PATCH_SRC:-/home/tim/Documents/WoW Client Patch/patch-4.MPQ}"
-ADDON_SRC="${ADDON_SRC:-/home/tim/WoW/Interface/AddOns}"
+
+# Addons come from the LIVE client on the Windows PC, over SMB. That machine is
+# the only place the addons Tim actually runs exist - /home/tim/WoW was never the
+# live client and has since been deleted. Pulling them at publish time means a
+# stale local copy can never be shipped by accident.
+# Set ADDON_SRC to a local directory to override (e.g. for testing offline).
+ADDON_SHARE="${ADDON_SHARE:-//192.168.0.200/WoW}"
+ADDON_CREDS="${ADDON_CREDS:-$HOME/.smbcreds-wow}"
+ADDON_SRC="${ADDON_SRC:-}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$HERE"
 
@@ -73,13 +81,28 @@ ADDON_LIST=""
 if [[ ${#ADDONS[@]} -gt 0 ]]; then
     STAGE=$(mktemp -d)
     trap 'rm -rf "$STAGE" 2>/dev/null || true' EXIT
-    for a in "${ADDONS[@]}"; do
-        if [[ ! -d "$ADDON_SRC/$a" ]]; then
-            echo "ERROR: addon '$a' not found at $ADDON_SRC/$a" >&2
-            exit 1
-        fi
-        cp -r "$ADDON_SRC/$a" "$STAGE/$a"
-    done
+    if [[ -n "$ADDON_SRC" ]]; then
+        # local override
+        for a in "${ADDONS[@]}"; do
+            [[ -d "$ADDON_SRC/$a" ]] || { echo "ERROR: addon '$a' not found at $ADDON_SRC/$a" >&2; exit 1; }
+            cp -r "$ADDON_SRC/$a" "$STAGE/$a"
+        done
+    else
+        [[ -r "$ADDON_CREDS" ]] || { echo "ERROR: no SMB credentials at $ADDON_CREDS" >&2; exit 1; }
+        command -v smbclient >/dev/null || { echo "ERROR: smbclient not installed" >&2; exit 1; }
+        echo "  pulling addons from $ADDON_SHARE ..."
+        for a in "${ADDONS[@]}"; do
+            # GVFS silently loses large writes, so talk SMB directly. Always.
+            smbclient "$ADDON_SHARE" -A "$ADDON_CREDS" \
+                -c "prompt off; recurse on; lcd \"$STAGE\"; cd \"Interface\\AddOns\"; mget $a" \
+                >/dev/null 2>&1 || true
+            if [[ ! -d "$STAGE/$a" ]]; then
+                echo "ERROR: could not pull addon '$a' from $ADDON_SHARE" >&2
+                echo "       Is the Windows PC on and the share reachable?" >&2
+                exit 1
+            fi
+        done
+    fi
     # Strip development files players do not need. BotPanel's tools/ alone is
     # 236K of test harness - nearly half the payload - and ships nothing useful.
     for junk in tools .git .github __pycache__; do
@@ -87,6 +110,14 @@ if [[ ${#ADDONS[@]} -gt 0 ]]; then
     done
     find "$STAGE" -type f \( -name '*.bak' -o -name '*.orig' -o -name '*.py' -o -name '*.pyc' \) \
         -delete 2>/dev/null || true
+    # Normalise permissions BEFORE hashing. zip stores the unix mode in each
+    # entry, so a file that happens to carry the execute bit changes the archive
+    # hash even when every byte of content is identical - which is exactly what
+    # happened between v3 (100744, built from a local copy) and v4 (100644,
+    # pulled over SMB) and forced a pointless re-download. The zip must depend on
+    # names and contents only.
+    find "$STAGE" -type d -exec chmod 755 {} +
+    find "$STAGE" -type f -exec chmod 644 {} +
     # fixed mtime + sorted input = byte-identical zip for identical content
     find "$STAGE" -exec touch -t 200001010000 {} +
     rm -f "$ADDON_ZIP"
