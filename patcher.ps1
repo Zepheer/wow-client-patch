@@ -1,23 +1,32 @@
 # WoW client patch updater.
-# Reads version.txt from GitHub, compares SHA-256 against the local patch,
-# downloads only if it differs, verifies what it downloaded, and clears the
-# WDB cache so item and spell tooltips are not stale.
+# Reads version.txt from GitHub and keeps two things current:
+#   1. the client patch MPQ  (Data\patch-4.MPQ)
+#   2. the server addons     (Interface\AddOns\...)
+# Each is downloaded only when its SHA-256 differs, and verified before it is
+# put in place. The WDB cache is cleared only when the MPQ actually changed.
 #
 # Exit codes:
 #   0  up to date, nothing done   (launch straight away)
-#  10  patch was updated          (worth showing the player before launching)
+#  10  something was updated      (worth showing the player before launching)
 #   1  config problem | 2 network | 3 verification failed
+#
+# DESIGN RULE: the addon step must never stop someone playing. Every failure in
+# that phase warns and carries on. Only the MPQ phase can return a hard error.
 
 $ErrorActionPreference = 'Stop'
 
 # ---- EDIT THESE TWO LINES ----------------------------------------------
 $VersionUrl = 'https://raw.githubusercontent.com/Zepheer/wow-client-patch/main/version.txt'
-$PatchUrl   = 'https://github.com/Zepheer/wow-client-patch/releases/latest/download/patch-4.MPQ'
+$BaseUrl    = 'https://github.com/Zepheer/wow-client-patch/releases/latest/download'
 # ------------------------------------------------------------------------
 
-$Root     = Split-Path -Parent $MyInvocation.MyCommand.Path
-$DataDir  = Join-Path $Root 'Data'
-$CacheDir = Join-Path $Root 'Cache'
+$Root      = Split-Path -Parent $MyInvocation.MyCommand.Path
+$DataDir   = Join-Path $Root 'Data'
+$CacheDir  = Join-Path $Root 'Cache'
+$AddOnsDir = Join-Path $Root 'Interface\AddOns'
+$Marker    = Join-Path $AddOnsDir '.patcher-addons.sha'
+
+$changed = $false
 
 function Say([string]$m) { Write-Host "  $m" }
 
@@ -50,64 +59,157 @@ foreach ($k in 'file','sha256') {
     if (-not $cfg.ContainsKey($k)) { Say "ERROR: version.txt has no '$k' entry."; exit 1 }
 }
 
+# =======================================================================
+#  PHASE 1 - the client patch MPQ
+# =======================================================================
 $PatchName = $cfg['file']
 $Expected  = $cfg['sha256'].ToLower()
 $Local     = Join-Path $DataDir $PatchName
+$PatchUrl  = "$BaseUrl/$PatchName"
 
-# --- compare ------------------------------------------------------------
 $current = ''
 if (Test-Path $Local) { $current = (Get-FileHash -Path $Local -Algorithm SHA256).Hash.ToLower() }
 
 if ($current -eq $Expected) {
     Say "Your client patch is up to date."
-    Write-Host ''
-    exit 0
+} else {
+    if ($current -eq '') { Say "$PatchName is missing - downloading it." }
+    else                 { Say "A new client patch is available - downloading." }
+    if ($cfg.ContainsKey('notes') -and $cfg['notes']) { Say "  $($cfg['notes'])" }
+
+    $tmp = Join-Path $env:TEMP ("$PatchName." + [guid]::NewGuid().ToString('N') + '.part')
+    try {
+        Invoke-WebRequest -Uri $PatchUrl -OutFile $tmp -UseBasicParsing -TimeoutSec 600
+    } catch {
+        Say "Download failed: $($_.Exception.Message)"
+        if (Test-Path $tmp) { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+        exit 2
+    }
+
+    $got = (Get-FileHash -Path $tmp -Algorithm SHA256).Hash.ToLower()
+    if ($got -ne $Expected) {
+        Say "ERROR: the downloaded file did not match its checksum. Nothing was changed."
+        Say "expected $Expected"
+        Say "got      $got"
+        Remove-Item $tmp -Force -ErrorAction SilentlyContinue
+        exit 3
+    }
+
+    # Never delete the old patch before the new one is verified and in place.
+    try {
+        Move-Item -Path $tmp -Destination $Local -Force
+    } catch {
+        Say "ERROR: could not write $Local"
+        Say "Close World of Warcraft and try again."
+        Remove-Item $tmp -Force -ErrorAction SilentlyContinue
+        exit 3
+    }
+    Say "Patch updated."
+    $changed = $true
+
+    # --- clear the WDB cache --------------------------------------------
+    # Only after a real MPQ change. Without this the client keeps showing OLD
+    # item and spell tooltips - the exact symptom that wastes the most time.
+    # Addon updates do NOT need it, so this deliberately sits inside this block.
+    if (Test-Path $CacheDir) {
+        $wdb = Join-Path $CacheDir 'WDB'
+        if (Test-Path $wdb) {
+            try { Remove-Item -Path $wdb -Recurse -Force; Say "Cleared the client cache." }
+            catch { Say "Note: could not clear Cache\WDB - close WoW and rerun if tooltips look wrong." }
+        }
+    }
 }
 
-if ($current -eq '') { Say "$PatchName is missing - downloading it." }
-else                 { Say "A new client patch is available - downloading." }
-if ($cfg.ContainsKey('notes') -and $cfg['notes']) { Say "  $($cfg['notes'])" }
+# =======================================================================
+#  PHASE 2 - the addons
+#  Everything below warns and continues. It must never block the launch.
+# =======================================================================
+if ($cfg.ContainsKey('addons_file') -and $cfg['addons_file'] -and $cfg.ContainsKey('addons_sha256')) {
+    try {
+        $AddOnsZip  = $cfg['addons_file']
+        $AddExpect  = $cfg['addons_sha256'].ToLower()
+        $AddUrl     = "$BaseUrl/$AddOnsZip"
 
-# --- download to a temp file, verify, then swap in ----------------------
-$tmp = Join-Path $env:TEMP ("$PatchName." + [guid]::NewGuid().ToString('N') + '.part')
-try {
-    Invoke-WebRequest -Uri $PatchUrl -OutFile $tmp -UseBasicParsing -TimeoutSec 600
-} catch {
-    Say "Download failed: $($_.Exception.Message)"
-    if (Test-Path $tmp) { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
-    exit 2
-}
+        # We cannot hash an extracted folder tree reliably, so we record what we
+        # installed in a marker file and compare against that.
+        $installed = ''
+        if (Test-Path $Marker) { $installed = (Get-Content $Marker -ErrorAction SilentlyContinue | Select-Object -First 1) }
+        if ($installed) { $installed = $installed.Trim().ToLower() }
 
-$got = (Get-FileHash -Path $tmp -Algorithm SHA256).Hash.ToLower()
-if ($got -ne $Expected) {
-    Say "ERROR: the downloaded file did not match its checksum. Nothing was changed."
-    Say "expected $Expected"
-    Say "got      $got"
-    Remove-Item $tmp -Force -ErrorAction SilentlyContinue
-    exit 3
-}
+        if ($installed -eq $AddExpect) {
+            Say "Your addons are up to date."
+        } else {
+            Say "Updating server addons..."
 
-# Never delete the old patch before the new one is verified and in place.
-try {
-    Move-Item -Path $tmp -Destination $Local -Force
-} catch {
-    Say "ERROR: could not write $Local"
-    Say "Close World of Warcraft and try again."
-    Remove-Item $tmp -Force -ErrorAction SilentlyContinue
-    exit 3
-}
-Say "Patch updated."
+            $atmp = Join-Path $env:TEMP ("addons." + [guid]::NewGuid().ToString('N') + '.zip')
+            Invoke-WebRequest -Uri $AddUrl -OutFile $atmp -UseBasicParsing -TimeoutSec 600
 
-# --- clear the WDB cache ------------------------------------------------
-# Without this the client keeps showing OLD item and spell tooltips after a
-# data change - the exact symptom that wastes the most time.
-if (Test-Path $CacheDir) {
-    $wdb = Join-Path $CacheDir 'WDB'
-    if (Test-Path $wdb) {
-        try { Remove-Item -Path $wdb -Recurse -Force; Say "Cleared the client cache." }
-        catch { Say "Note: could not clear Cache\WDB - close WoW and rerun if tooltips look wrong." }
+            $agot = (Get-FileHash -Path $atmp -Algorithm SHA256).Hash.ToLower()
+            if ($agot -ne $AddExpect) {
+                Say "Addon download did not match its checksum - skipping. Your addons were not changed."
+                Remove-Item $atmp -Force -ErrorAction SilentlyContinue
+            } else {
+                $stage = Join-Path $env:TEMP ("addons." + [guid]::NewGuid().ToString('N'))
+                New-Item -ItemType Directory -Path $stage -Force | Out-Null
+
+                # .NET first (works on PS4 / .NET 4.5). Expand-Archive needs PS5.
+                $unpacked = $false
+                try {
+                    Add-Type -AssemblyName System.IO.Compression.FileSystem
+                    [System.IO.Compression.ZipFile]::ExtractToDirectory($atmp, $stage)
+                    $unpacked = $true
+                } catch {
+                    try {
+                        Expand-Archive -Path $atmp -DestinationPath $stage -Force
+                        $unpacked = $true
+                    } catch {
+                        Say "Could not unpack the addon archive - skipping. ($($_.Exception.Message))"
+                    }
+                }
+
+                if ($unpacked) {
+                    if (-not (Test-Path $AddOnsDir)) { New-Item -ItemType Directory -Path $AddOnsDir -Force | Out-Null }
+
+                    # Only ever touch folders that came out of OUR archive, and only
+                    # if they are plain names. This is what stops a bad manifest
+                    # writing anywhere outside Interface\AddOns.
+                    $ok = 0
+                    foreach ($src in (Get-ChildItem -Path $stage -Directory)) {
+                        $name = $src.Name
+                        if ($name -match '[\\/:]' -or $name -eq '.' -or $name -eq '..') {
+                            Say "Skipping suspicious entry '$name'."
+                            continue
+                        }
+                        $dest = Join-Path $AddOnsDir $name
+                        try {
+                            if (Test-Path $dest) { Remove-Item -Path $dest -Recurse -Force }
+                            Copy-Item -Path $src.FullName -Destination $dest -Recurse -Force
+                            $ok++
+                        } catch {
+                            Say "Could not update addon '$name' - is WoW still running?"
+                        }
+                    }
+
+                    if ($ok -gt 0) {
+                        Set-Content -Path $Marker -Value $AddExpect -Encoding ASCII
+                        $names = $cfg['addons_list']
+                        if ($names) { Say "Addons updated: $names" } else { Say "Addons updated ($ok)." }
+                        $changed = $true
+                    } else {
+                        Say "No addons could be updated. Your existing ones were left alone."
+                    }
+                }
+
+                Remove-Item $stage -Recurse -Force -ErrorAction SilentlyContinue
+                Remove-Item $atmp -Force -ErrorAction SilentlyContinue
+            }
+        }
+    } catch {
+        # Anything unexpected in the addon phase is a warning, never a blocker.
+        Say "Addon update skipped: $($_.Exception.Message)"
     }
 }
 
 Write-Host ''
-exit 10   # signal 'something changed' so the launcher shows this
+if ($changed) { exit 10 }
+exit 0

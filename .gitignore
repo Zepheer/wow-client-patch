@@ -1,5 +1,7 @@
-# The MPQ is distributed via GitHub Releases, never committed - committing a
-# 4.8MB binary on every update would grow git history permanently.
+# Binaries are distributed via GitHub Releases, never committed - committing a
+# 4.8MB binary on every update would grow git history permanently. The same
+# applies to addons.zip, which publish.sh rebuilds from the live client.
 *.MPQ
 *.mpq
 *.part
+addons.zip

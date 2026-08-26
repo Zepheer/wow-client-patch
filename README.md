@@ -24,4 +24,12 @@ files, so it can never stop you playing.
 
 ## What it installs
 
-`Data\patch-4.MPQ` — custom items, spells and interface data for this server.
+`Data\patch-4.MPQ` — custom items, spells and tooltip data for this server.
+
+`Interface\AddOns\...` — the server's addons. Currently **DungeonObjective**, which
+tells you which boss actually completes a random dungeon when you zone in
+(`/objective` to see it again).
+
+Your own addons are never touched. The patcher only replaces the folders that came
+out of its own archive, and if anything goes wrong with an addon update it says so
+and starts the game anyway.
