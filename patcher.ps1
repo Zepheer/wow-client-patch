@@ -82,7 +82,12 @@ if (-not $NoSelfUpdate -and $cfg.ContainsKey('patcher_sha256') -and $cfg['patche
 
         if ($me -and $haveSelf -and $wantSelf -ne $haveSelf) {
             Say "Updating the patcher itself..."
-            $stmp = Join-Path $env:TEMP ("patcher." + [guid]::NewGuid().ToString('N') + '.ps1')
+            # Stage NEXT TO the script, not in %TEMP%. If TEMP sits on another
+            # volume, Move-Item degrades from an atomic rename into copy+delete,
+            # and an interruption there would leave a truncated patcher.ps1 -
+            # breaking the very thing that repairs everything else. Same volume
+            # means the swap is a rename and cannot half-happen.
+            $stmp = Join-Path (Split-Path -Parent $me) ("patcher.new." + [guid]::NewGuid().ToString('N') + '.tmp')
             Invoke-WebRequest -Uri "$BaseUrl/patcher.ps1" -OutFile $stmp -UseBasicParsing -TimeoutSec 120
 
             $gotSelf = (Get-FileHash -Path $stmp -Algorithm SHA256).Hash.ToLower()
@@ -106,6 +111,7 @@ if (-not $NoSelfUpdate -and $cfg.ContainsKey('patcher_sha256') -and $cfg['patche
     } catch {
         Say "Could not update the patcher - continuing with the current one."
         Say "($($_.Exception.Message))"
+        if ($stmp -and (Test-Path $stmp)) { Remove-Item $stmp -Force -ErrorAction SilentlyContinue }
     }
 }
 
