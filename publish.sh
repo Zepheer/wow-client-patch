@@ -15,17 +15,26 @@ cd "$HERE"
 
 [[ -f "$SRC" ]] || { echo "ERROR: no patch at $SRC" >&2; exit 1; }
 
+git config user.email >/dev/null 2>&1 || {
+    echo "ERROR: no git identity in this repo. Run:" >&2
+    echo "  git config user.name  \"Zepheer\"" >&2
+    echo "  git config user.email \"72371470+Zepheer@users.noreply.github.com\"" >&2
+    exit 1
+}
+
 NOTES="${1:-}"
 SHA=$(sha256sum "$SRC" | cut -d' ' -f1)
 SIZE=$(stat -c%s "$SRC")
 
-OLD=0
-[[ -f version.txt ]] && OLD=$(sed -n 's/^version=//p' version.txt | head -1)
+# Compare against the last COMMITTED manifest, not the working copy. If a previous
+# run died after rewriting version.txt but before committing, the working copy already
+# holds the new hash - comparing against it would report "nothing to publish" and exit 0
+# on a patch that was never actually released. (Hit for real 2026-08-25.)
+OLDSHA=$(git show HEAD:version.txt 2>/dev/null | sed -n 's/^sha256=//p' | head -1 || true)
+OLD=$(git show HEAD:version.txt 2>/dev/null | sed -n 's/^version=//p' | head -1 || echo 0)
 [[ -z "$OLD" ]] && OLD=0
-
-OLDSHA=$(sed -n 's/^sha256=//p' version.txt 2>/dev/null | head -1 || true)
 if [[ "$OLDSHA" == "$SHA" ]]; then
-    echo "The patch is byte-identical to version $OLD - nothing to publish."
+    echo "The patch is byte-identical to the published version $OLD - nothing to publish."
     exit 0
 fi
 
