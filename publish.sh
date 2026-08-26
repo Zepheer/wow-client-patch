@@ -31,7 +31,11 @@ ADDONS=(
 )
 # -------------------------------------------------------------------------
 
-SRC="${PATCH_SRC:-/home/tim/WoW/Data/patch-4.MPQ}"
+# Source the MPQ from the MASTER build, not from a game client. /home/tim/WoW is
+# NOT the client Tim plays (that lives on the Windows PC), so its Data folder is
+# incidental - it was empty when this was first tried, and publishing from a
+# stale or half-restored client copy is how you ship the wrong bytes.
+SRC="${PATCH_SRC:-/home/tim/Documents/WoW Client Patch/patch-4.MPQ}"
 ADDON_SRC="${ADDON_SRC:-/home/tim/WoW/Interface/AddOns}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$HERE"
