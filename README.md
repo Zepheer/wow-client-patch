@@ -22,6 +22,15 @@ key press before launching.
 If the update server is unreachable it starts the game anyway with your current
 files, so it can never stop you playing.
 
+## It updates itself
+
+You only ever install these two files by hand. After that the patcher keeps
+**itself** up to date too — when a new version is published it downloads it,
+checks it, replaces itself and re-runs, all before the game starts.
+
+If that ever fails it says so and carries on with the version you already have,
+so it cannot leave you unable to play.
+
 ## What it installs
 
 `Data\patch-4.MPQ` — custom items, spells and tooltip data for this server.

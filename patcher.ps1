@@ -1,5 +1,12 @@
+param(
+    # Set when this script re-launches itself after updating. Stops an update
+    # loop if a hash ever fails to settle.
+    [switch]$NoSelfUpdate
+)
+
 # WoW client patch updater.
-# Reads version.txt from GitHub and keeps two things current:
+# Reads version.txt from GitHub and keeps three things current:
+#   0. itself                (patcher.ps1 - so players never re-download by hand)
 #   1. the client patch MPQ  (Data\patch-4.MPQ)
 #   2. the server addons     (Interface\AddOns\...)
 # Each is downloaded only when its SHA-256 differs, and verified before it is
@@ -57,6 +64,49 @@ foreach ($line in $raw -split "`n") {
 }
 foreach ($k in 'file','sha256') {
     if (-not $cfg.ContainsKey($k)) { Say "ERROR: version.txt has no '$k' entry."; exit 1 }
+}
+
+# =======================================================================
+#  PHASE 0 - update THIS SCRIPT
+#  Without this, every change to the patcher needs every player to
+#  re-download it by hand, and the old copy keeps working just well enough
+#  that nobody notices they are missing things.
+#  Like the addon phase, any failure here warns and carries on.
+# =======================================================================
+if (-not $NoSelfUpdate -and $cfg.ContainsKey('patcher_sha256') -and $cfg['patcher_sha256']) {
+    try {
+        $me       = $PSCommandPath
+        $wantSelf = $cfg['patcher_sha256'].ToLower()
+        $haveSelf = ''
+        if ($me -and (Test-Path $me)) { $haveSelf = (Get-FileHash -Path $me -Algorithm SHA256).Hash.ToLower() }
+
+        if ($me -and $haveSelf -and $wantSelf -ne $haveSelf) {
+            Say "Updating the patcher itself..."
+            $stmp = Join-Path $env:TEMP ("patcher." + [guid]::NewGuid().ToString('N') + '.ps1')
+            Invoke-WebRequest -Uri "$BaseUrl/patcher.ps1" -OutFile $stmp -UseBasicParsing -TimeoutSec 120
+
+            $gotSelf = (Get-FileHash -Path $stmp -Algorithm SHA256).Hash.ToLower()
+            if ($gotSelf -ne $wantSelf) {
+                Say "The new patcher did not match its checksum - keeping the current one."
+                Remove-Item $stmp -Force -ErrorAction SilentlyContinue
+            } else {
+                # Only replace after the checksum passed, so a truncated or wrong
+                # download can never overwrite a working patcher.
+                Move-Item -Path $stmp -Destination $me -Force
+                Say "Patcher updated - re-running the new version."
+                Write-Host ''
+
+                # Run the replacement in a fresh process. Re-executing in-process
+                # is subtle because this script is already loaded; a new process
+                # is unambiguous.
+                $proc = Start-Process -FilePath 'powershell' -PassThru -Wait -NoNewWindow -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File',$me,'-NoSelfUpdate'
+                exit $proc.ExitCode
+            }
+        }
+    } catch {
+        Say "Could not update the patcher - continuing with the current one."
+        Say "($($_.Exception.Message))"
+    }
 }
 
 # =======================================================================
