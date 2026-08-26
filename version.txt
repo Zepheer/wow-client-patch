@@ -1,10 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=3
+version=4
 file=patch-4.MPQ
 sha256=25ab46128bc9f17b4889fad22b8dbf64be4bd8a6ff0bb56f7c87a9db581a49be
 size=4997020
 addons_file=addons.zip
-addons_sha256=99428846b7a36b170ffdffa7f7971d540aa70bd20f5c288eb1cf230f9793aed8
+addons_sha256=f8680f7e8685adb9902ab91a80ffca520d918424f6d58f72f0aa47d3d2f67b76
 addons_size=334350
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy
-notes=Touched by the Light now scales off Stamina; new DungeonObjective addon tells you which boss completes a random dungeon
+patcher_sha256=977d576887d94d14aebe2107bd0a974aa19f4ff8d34a896ae88da7c2ca554525
+notes=The patcher now updates itself - this is the last time you need to download it by hand
