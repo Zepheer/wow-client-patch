@@ -1,6 +1,10 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=2
+version=3
 file=patch-4.MPQ
-sha256=7d50d0bfdd1b54df4c62fce1a9d8dfdde9ff21015b78e0c2ba432f2ccd4b40ce
-size=4996966
-notes=Leatherworking leg Reinforcements level requirement removed; Jeeves tooltip wording
+sha256=25ab46128bc9f17b4889fad22b8dbf64be4bd8a6ff0bb56f7c87a9db581a49be
+size=4997020
+addons_file=addons.zip
+addons_sha256=99428846b7a36b170ffdffa7f7971d540aa70bd20f5c288eb1cf230f9793aed8
+addons_size=334350
+addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy
+notes=Touched by the Light now scales off Stamina; new DungeonObjective addon tells you which boss completes a random dungeon
