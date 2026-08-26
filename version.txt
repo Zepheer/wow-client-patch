@@ -1,6 +1,6 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=1
+version=2
 file=patch-4.MPQ
-sha256=930db951405bf75a2e6c0d6021113c10395de4bfe1a318072b0c44ad44be4562
-size=4996969
-notes=Jeeves auction house, Portable Anvil and Forge, gathering and enchant changes
+sha256=7d50d0bfdd1b54df4c62fce1a9d8dfdde9ff21015b78e0c2ba432f2ccd4b40ce
+size=4996966
+notes=Leatherworking leg Reinforcements level requirement removed; Jeeves tooltip wording
