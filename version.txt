@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=5
+version=6
 file=patch-4.MPQ
 sha256=25ab46128bc9f17b4889fad22b8dbf64be4bd8a6ff0bb56f7c87a9db581a49be
 size=4997020
 addons_file=addons.zip
-addons_sha256=f8680f7e8685adb9902ab91a80ffca520d918424f6d58f72f0aa47d3d2f67b76
-addons_size=334350
+addons_sha256=eb257582d9b3dcbde2dba10b67a59a6f3aeb90070a3b890ffc5ffe5c06d79b62
+addons_size=339275
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=Patcher self-update hardening
+notes=BotPanel: one-key requeue with /bpq and /bpqh, plus a Reform group button
