@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=8
+version=9
 file=patch-4.MPQ
 sha256=041bde3c3de1c25e72e206f879865c0b93293721a582aacc7c7ffed6f1d761c9
 size=5004538
 addons_file=addons.zip
-addons_sha256=eb257582d9b3dcbde2dba10b67a59a6f3aeb90070a3b890ffc5ffe5c06d79b62
-addons_size=339275
-addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy
+addons_sha256=e7f75f8ec7527417a1d94dbb424fe135f8fc6740b53f539b726b3dfd80eb8f49
+addons_size=365949
+addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,AggroList
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=Dwarf Shamans can now be rolled, mage food and water become one Conjure Refreshment that scales to any level, and Ghost Wolf and Travel Form tooltips show their real speed
+notes=New addon AggroList: a threat panel that lists every mob fighting your group with its health and your threat on each, and flags the ones you are not holding
