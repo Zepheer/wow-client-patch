@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=9
+version=10
 file=patch-4.MPQ
 sha256=041bde3c3de1c25e72e206f879865c0b93293721a582aacc7c7ffed6f1d761c9
 size=5004538
 addons_file=addons.zip
-addons_sha256=e7f75f8ec7527417a1d94dbb424fe135f8fc6740b53f539b726b3dfd80eb8f49
-addons_size=365949
+addons_sha256=655b895b23af6e0a4337c6fce2155bb47163872e82e7c6e02ab77f06ae63690e
+addons_size=366404
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,AggroList
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=New addon AggroList: a threat panel that lists every mob fighting your group with its health and your threat on each, and flags the ones you are not holding
+notes=AggroList no longer blocks mouse clicks in the empty space below the mob list
