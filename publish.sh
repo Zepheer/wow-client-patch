@@ -28,6 +28,7 @@ ADDONS=(
     BotPanel
 	Talented
 	ConversionTherapy
+	AggroList
 )
 # -------------------------------------------------------------------------
 
