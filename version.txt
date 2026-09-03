@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=11
+version=12
 file=patch-4.MPQ
 sha256=62448a7a08a9db50eea29c882a85fab6cb9939733134807cfe6f6f8e1ec5d9c9
 size=5005541
 addons_file=addons.zip
-addons_sha256=fe312dd0f5e3f05251ea7f4a1a1be2af1ab526da0f0de9233aa292aaca0bbb78
-addons_size=378478
+addons_sha256=8b1db91e83393c7e92d4749d87341ef17e47a67fb974dbf39d4f470af3e508cb
+addons_size=378645
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,AggroList,FishingLog
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=Magnet fishing, rare Northrend catches, and the FishingLog addon
+notes=FishingLog no longer spams your chat frame on login and zone changes
