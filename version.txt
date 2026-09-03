@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=12
+version=13
 file=patch-4.MPQ
 sha256=62448a7a08a9db50eea29c882a85fab6cb9939733134807cfe6f6f8e1ec5d9c9
 size=5005541
 addons_file=addons.zip
-addons_sha256=8b1db91e83393c7e92d4749d87341ef17e47a67fb974dbf39d4f470af3e508cb
-addons_size=378645
+addons_sha256=5d1a18f8badf5130af1b5c168f662cf66ae0500b5f018a69eec2d4ccb581d173
+addons_size=378987
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,AggroList,FishingLog
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=FishingLog no longer spams your chat frame on login and zone changes
+notes=The bot roster list now refreshes when it should. It had stopped updating on state changes, so the panel could show a stale roster until you reopened it.
