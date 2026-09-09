@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=14
+version=15
 file=patch-4.MPQ
 sha256=62448a7a08a9db50eea29c882a85fab6cb9939733134807cfe6f6f8e1ec5d9c9
 size=5005541
 addons_file=addons.zip
-addons_sha256=047fdb04c60c601021636ce20f6a9b05a45f8f9316759405fcb6e65da2f19f93
-addons_size=1790529
-addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,FishingLog,ReagentBankUI,AzerCoreOps
+addons_sha256=1bfa35280f76ee51f0a006003f66117dceae32cd147a9c538279d0522766446e
+addons_size=1827189
+addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,FishingLog,ReagentBankUI,AzerCoreOps,DungeonClear
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=Reagent Bank and AzerCore Ops added. AggroList removed - its target marking is now a server command, .aggro, and needs no addon.
+notes=Client patch v15
