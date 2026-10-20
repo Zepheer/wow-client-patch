@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=16
+version=17
 file=patch-4.MPQ
-sha256=e87d9e91028c64d85736c5240cbecb27b0b473b59d3c6d85c2df9e985b8492ed
-size=5005554
+sha256=310e7ab665299a39678503c109a230128dd7403649406d7faff1134374cdc8da
+size=5005535
 addons_file=addons.zip
 addons_sha256=d9e8c4d1f7b61cb7239491aaeba5edb4eb4b29f247041a900c4764219deade49
 addons_size=2865942
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,FishingLog,ReagentBankUI,AzerCoreOps,DungeonClear,AIO_Client,MythicPlusMedia
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=Mythic+ dungeons are open. Adds the AIO addon (it draws the Mythic+ window) and MythicPlusMedia (its textures and sounds), and gives the Mythic Keystone its icon. AzerCore Ops updated to 0.7.5j.
+notes=Rogue Camouflage now gives 10% / 20% / 30% speed while stealthed (was 5% / 10% / 15%).
