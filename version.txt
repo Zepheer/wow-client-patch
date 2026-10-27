@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=17
+version=18
 file=patch-4.MPQ
-sha256=310e7ab665299a39678503c109a230128dd7403649406d7faff1134374cdc8da
-size=5005535
+sha256=45db54a6b0e2636b7f284da602127e3ba0d25d3f5c11fe95d421867e4526ad0a
+size=5059778
 addons_file=addons.zip
 addons_sha256=d9e8c4d1f7b61cb7239491aaeba5edb4eb4b29f247041a900c4764219deade49
 addons_size=2865942
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,FishingLog,ReagentBankUI,AzerCoreOps,DungeonClear,AIO_Client,MythicPlusMedia
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=Rogue Camouflage now gives 10% / 20% / 30% speed while stealthed (was 5% / 10% / 15%).
+notes=Flying now works in Eastern Kingdoms and Kalimdor with Old World Flying: buy it from Hira Snowdawn in Dalaran (level 80, 150 emblems of one type) or, once any character on your account knows it, from the Account Riding Trainer in Stormwind or Orgrimmar (1000g). Flying is allowed in Dalaran with Cold Weather Flying. Artisan Riding is now 1000g and Cold Weather Flying 500g.
