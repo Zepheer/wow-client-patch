@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=18
+version=19
 file=patch-4.MPQ
-sha256=45db54a6b0e2636b7f284da602127e3ba0d25d3f5c11fe95d421867e4526ad0a
-size=5059778
+sha256=8edaba6561746b5af6b258d93095b30d955c7c69ce3a52a82d6bf4179c654477
+size=5062869
 addons_file=addons.zip
 addons_sha256=d9e8c4d1f7b61cb7239491aaeba5edb4eb4b29f247041a900c4764219deade49
 addons_size=2865942
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,FishingLog,ReagentBankUI,AzerCoreOps,DungeonClear,AIO_Client,MythicPlusMedia
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=Flying now works in Eastern Kingdoms and Kalimdor with Old World Flying: buy it from Hira Snowdawn in Dalaran (level 80, 150 emblems of one type) or, once any character on your account knows it, from the Account Riding Trainer in Stormwind or Orgrimmar (1000g). Flying is allowed in Dalaran with Cold Weather Flying. Artisan Riding is now 1000g and Cold Weather Flying 500g.
+notes=Beacon of Light now lasts until you place it on another target. Glyph of Beacon of Light now makes your direct heals on your Beacon target heal for 10% more. Adds the titles Slow and Steady and the Unhurried, earned by levelling slowly with Tarin Sandsworn in Dalaran.
