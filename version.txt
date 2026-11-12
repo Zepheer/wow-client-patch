@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=20
+version=21
 file=patch-4.MPQ
-sha256=958d5dd3533bbe548fd6d26758506cda6e617f0adb38c9494cdb84fbeac98ecc
-size=5352339
+sha256=8e14e107d6e8622a41be36a77f07f2aae55b815f85f31588678237c41f642899
+size=5352375
 addons_file=addons.zip
 addons_sha256=db151cede62eff59a8e0a089af487faa1109cb10742b75050ec0948ca779438f
 addons_size=1455988
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,FishingLog,ReagentBankUI,DungeonClear,AIO_Client,MythicPlusMedia
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=Blood elves can now be Druids (create one at character select). Adds Cat, Bear, Dire Bear, Tree of Life, Aquatic, Travel, Flight and Moonkin forms with custom models. Learn forms from Harene Plainwalker in Silvermoon.
+notes=Druid Flight Form and Swift Flight Form now use the Phoenix Hatchling model, resized. Blood elf Druid form models adjusted.
