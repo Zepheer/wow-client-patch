@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=22
+version=23
 file=patch-4.MPQ
-sha256=0aa6a524b87209fb815c8ba55857c9d4094ffb7fde2f324fe3413d1872d5fc5b
-size=5357506
+sha256=7130781117977e3eee9f6e1d412f4562686d1fae377ceccf33de96137874e1cc
+size=5357476
 addons_file=addons.zip
 addons_sha256=db151cede62eff59a8e0a089af487faa1109cb10742b75050ec0948ca779438f
 addons_size=1455988
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,FishingLog,ReagentBankUI,DungeonClear,AIO_Client,MythicPlusMedia
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=New level 80 leather Defense gear for Druid tanks, 41 new Leatherworking Defense recipes, and the new "of the Defender" leather suffix.
+notes=Fixed the new Leatherworking Defense recipes: they no longer ask for Blacksmithing tools, and Heavy Earthhide Jerkin no longer requires Armorsmithing.
