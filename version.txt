@@ -1,11 +1,11 @@
 # Read by WoWPatcher.bat. One key=value per line. Lines starting with # are ignored.
-version=25
+version=26
 file=patch-4.MPQ
 sha256=765af41faacd4eccb97881f8dc901f362d344f8a4e60978a73ce3a9ea1ae0bec
 size=5359210
 addons_file=addons.zip
-addons_sha256=0199022ddcc9ff7b6ddc3cac4a5bd6eb7bc6f9a974dbde1df1eccd8c89bc8855
-addons_size=1459333
+addons_sha256=9bbb2de244747c643ec3ca3583c70477c0ea4be2f46c29b885f1f1d441c4d943
+addons_size=1463059
 addons_list=DungeonObjective,BotPanel,Talented,ConversionTherapy,FishingLog,ReagentBankUI,DungeonClear,AIO_Client,MythicPlusMedia
 patcher_sha256=03d3ad78b365aefb82208c7543de6a12775aa52b36ae9cb737cad9ea898d9dce
-notes=BotPanel 1.19: Build group fills the whole group again. Below the Death Knight level it picks another class for that slot, it invites bots that log in but don't join, and it logs back in any logged-out bots already in your group. Squad tab "Tanks pull" now sends only the tanks.
+notes=BotPanel 1.21: if the bot your orders go to logs off or leaves your group, orders switch back to Everyone. Log in now says when the bot cap turned bots away. Destroy and saved-position Reset ask before they run. Dismiss all and Remove ALL bots stop a group build that is still running. Your chosen panel and quick bar layers now stay put after a reload.
